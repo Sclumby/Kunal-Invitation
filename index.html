@@ -158,14 +158,14 @@ body.locked { overflow: hidden; }
 
 /* 3. Front flaps of envelope */
 .env-flap-left {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 60%;
+  position: absolute; left: 0; top: 0; bottom: 0; width: 52%;
   clip-path: polygon(0 0, 100% 50%, 0 100%); -webkit-clip-path: polygon(0 0, 100% 50%, 0 100%);
   border-right: 1px solid rgba(255,255,255,0.05);
   box-shadow: 5px 0 15px rgba(0,0,0,0.2);
   z-index: 3;
 }
 .env-flap-right {
-  position: absolute; right: 0; top: 0; bottom: 0; width: 60%;
+  position: absolute; right: 0; top: 0; bottom: 0; width: 52%;
   clip-path: polygon(100% 0, 0 50%, 100% 100%); -webkit-clip-path: polygon(100% 0, 0 50%, 100% 100%);
   border-left: 1px solid rgba(255,255,255,0.05);
   z-index: 3;
@@ -232,7 +232,7 @@ body.locked { overflow: hidden; }
   transform: rotateX(180deg);
 }
 .env-container.open .env-card {
-  transform: translateY(-40%);
+  transform: translateY(-15%);
   transition-delay: 0.3s;
 }
 
