@@ -163,12 +163,14 @@ body.locked { overflow: hidden; }
   border-right: 1px solid rgba(255,255,255,0.05);
   box-shadow: 5px 0 15px rgba(0,0,0,0.2);
   z-index: 3;
+  transition: z-index 0s 0.2s; /* delay matches card slide */
 }
 .env-flap-right {
   position: absolute; right: 0; top: 0; bottom: 0; width: 85%;
   clip-path: polygon(100% 0, 0 100%, 100% 100%); -webkit-clip-path: polygon(100% 0, 0 100%, 100% 100%);
   border-left: 1px solid rgba(255,255,255,0.05);
   z-index: 3;
+  transition: z-index 0s 0.2s;
 }
 .env-flap-bottom {
   position: absolute; left: 0; right: 0; bottom: 0; height: 50%;
@@ -231,9 +233,13 @@ body.locked { overflow: hidden; }
 .env-container.open .env-top-flap {
   transform: rotateX(180deg);
 }
+.env-container.open .env-flap-left,
+.env-container.open .env-flap-right {
+  z-index: 1; /* Drop side flaps behind the card so they never clip the text! */
+}
 .env-container.open .env-card {
-  transform: translateY(-25%);
-  transition-delay: 0.3s;
+  transform: translateY(-30%);
+  transition-delay: 0.2s;
 }
 
 /* ════════════════════════════════════
