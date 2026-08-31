@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kunal &amp; Dr. Pradnya — Engagement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Jost:wght@300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════
+   ROOT & BASE
+════════════════════════════════════ */
+:root {
+  --green-dark: #0A1C14;
+  --green-env: #133324;
+  --green-env-light: #1A4430;
+  --gold: #D8B565;
+  --gold-light: #F4E2AA;
+  --gold-dark: #B08A3E;
+  --ivory: #FAF5EB;
+  --text-dim: #CFC6AE;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body {
+  background: var(--green-dark);
+  color: var(--ivory);
+  font-family: 'Jost', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+body.locked { overflow: hidden; }
+
+/* ════════════════════════════════════
+   PARTICLES / SFX
+════════════════════════════════════ */
+#sfx { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.orb {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(circle, rgba(216,181,101,0.15), transparent 70%);
+  animation: float 15s infinite ease-in-out;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-40px) scale(1.1); }
+}
+.sparkle {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: var(--gold-light);
+  border-radius: 50%;
+  animation: twinkle infinite ease-in-out;
+  box-shadow: 0 0 8px 2px rgba(216, 181, 101, 0.5);
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.1; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 12px 4px rgba(216, 181, 101, 0.8); }
+}
+
+/* ════════════════════════════════════
+   ENVELOPE SCREEN
+════════════════════════════════════ */
+#intro-screen {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at center, #112d1f 0%, var(--green-dark) 100%);
+  transition: opacity 1.5s ease, visibility 1.5s;
+}
+#intro-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.env-text-top {
+  position: absolute; top: 12%; text-align: center; width: 100%;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(1.2rem, 4vw, 1.6rem); color: var(--gold-light);
+  letter-spacing: 0.08em; opacity: 0; animation: fade-in 2s ease 0.5s forwards;
+  pointer-events: none;
+}
+.env-text-bottom {
+  position: absolute; bottom: 12%; text-align: center; width: 100%;
+  font-family: 'Jost', sans-serif; font-size: 0.7rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--gold-dark);
+  animation: pulse 2.5s infinite;
+  pointer-events: none;
+}
+@keyframes fade-in { to { opacity: 1; } }
+@keyframes pulse { 0%, 100% { opacity: 0.4; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+
+/* ── ENVELOPE 3D WRAPPER ── */
+.env-container {
+  position: relative;
+  width: min(90vw, 460px);
+  height: calc(min(90vw, 460px) * 0.65);
+  perspective: 1600px;
+  transform-style: preserve-3d;
+  animation: slide-up 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@keyframes slide-up {
+  from { transform: translateY(100px) scale(0.9); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Base paper texture applied to all envelope parts */
+.paper {
+  background-color: var(--green-env);
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.4);
+}
+
+/* 1. Back/Pocket of envelope */
+.env-back {
+  position: absolute; inset: 0;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 100px rgba(216,181,101,0.1);
+  overflow: hidden;
+  background-color: var(--ivory);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+}
+
+/* Inside pocket shadow */
+.env-back::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 60%);
+  z-index: 1;
+}
+
+/* 2. The Invitation Card (Starts inside the envelope) */
+.env-card {
+  position: absolute; 
+  left: 3%; right: 3%; bottom: 2%; top: 2%;
+  background: var(--ivory);
+  border-radius: 2px;
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 1px solid var(--gold);
+  padding: 20px;
+  text-align: center;
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+}
+/* This card peeks out slightly. We apply paper texture to it as well. */
+.env-card::before {
+  content:''; position: absolute; inset: 0; opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.card-preview-text {
+  position: relative; z-index: 3;
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+  color: #3b2c14;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+}
+.card-preview-line {
+  position: relative; z-index: 3;
+  width: 60%; height: 1px; background: var(--gold-dark); margin: 8px auto 0;
+}
+
+/* 3. Front flaps of envelope */
+.env-flap-left {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 60%;
+  clip-path: polygon(0 0, 100% 50%, 0 100%); -webkit-clip-path: polygon(0 0, 100% 50%, 0 100%);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+  z-index: 3;
+}
+.env-flap-right {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 60%;
+  clip-path: polygon(100% 0, 0 50%, 100% 100%); -webkit-clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  border-left: 1px solid rgba(255,255,255,0.05);
+  z-index: 3;
+}
+.env-flap-bottom {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 65%;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%); -webkit-clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  filter: drop-shadow(0 -5px 10px rgba(0,0,0,0.3));
+  z-index: 3;
+}
+
+/* 4. Top Flap (opens) */
+.env-top-flap {
+  position: absolute; top: -1px; left: -1px; right: -1px; height: 61%;
+  transform-origin: top;
+  transform-style: preserve-3d;
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 4;
+}
+.env-flap-front {
+  position: absolute; inset: 0;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.env-flap-back {
+  position: absolute; inset: 0;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: rotateY(180deg);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  background-color: var(--ivory);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+  box-shadow: inset 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* 5. Wax Seal (The image we generated) */
+.wax-seal {
+  position: absolute; 
+  bottom: 0; left: 50%;
+  width: clamp(70px, 18vw, 90px); height: clamp(70px, 18vw, 90px);
+  margin-left: calc(clamp(70px, 18vw, 90px) / -2);
+  margin-bottom: calc(clamp(70px, 18vw, 90px) / -2);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.4s ease, filter 0.4s ease, opacity 0.6s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 10px rgba(0,0,0,0.3) inset;
+  background: url('wax_seal.jpg') no-repeat center center;
+  background-size: 155%; /* Zoom in to crop out the white paper border */
+}
+.wax-seal:hover {
+  transform: scale(1.08); filter: brightness(1.1);
+}
+
+/* ── ANIMATION STATES ── */
+.env-container.open {
+  transform: translateY(30px) scale(0.95);
+  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.env-container.open .wax-seal {
+  opacity: 0; transform: scale(1.5) rotate(15deg); filter: blur(4px); pointer-events: none;
+}
+.env-container.open .env-top-flap {
+  transform: rotateX(180deg);
+}
+.env-container.open .env-card {
+  transform: translateY(-40%);
+  transition-delay: 0.3s;
+}
+
+/* ════════════════════════════════════
+   MAIN INVITATION CONTENT
+════════════════════════════════════ */
+#main-content {
+  opacity: 0; visibility: hidden;
+  transition: opacity 1s ease 0.5s;
+  padding-bottom: 100px;
+}
+#main-content.visible {
+  opacity: 1; visibility: visible;
+}
+
+.invite-wrapper {
+  max-width: 640px; margin: 0 auto;
+  padding: 20px;
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center; padding-top: 60px;
+  position: relative;
+}
+.hero::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--gold));
+}
+
+.intro-text {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(1rem, 3vw, 1.2rem); color: var(--text-dim);
+  letter-spacing: 0.1em; margin: 20px 0 15px;
+}
+
+/* FIXING NAMES VISIBILITY */
+.names {
+  font-family: 'Cormorant Garamond', serif; font-weight: 500;
+  font-size: clamp(2.8rem, 10vw, 4.5rem); line-height: 1.1;
+  color: var(--gold-light);
+  /* Removed -webkit-background-clip text for solid rendering, used text-shadow instead */
+  text-shadow: 0 4px 15px rgba(0,0,0,0.5), 0 0 30px rgba(216,181,101,0.2);
+  margin-bottom: 15px;
+}
+.names .amp {
+  display: block; font-family: 'Great Vibes', cursive;
+  font-size: 0.7em; color: var(--gold); margin: -5px 0;
+}
+
+.tagline {
+  font-size: clamp(0.85rem, 2.5vw, 0.95rem); font-weight: 300;
+  letter-spacing: 0.08em; color: var(--ivory);
+  max-width: 80%; margin: 0 auto; line-height: 1.7;
+}
+
+/* ── DIVIDERS ── */
+.divider {
+  display: flex; align-items: center; justify-content: center; gap: 15px;
+  margin: 50px 0; opacity: 0.8;
+}
+.divider::before, .divider::after {
+  content: ''; height: 1px; width: 60px;
+  background: linear-gradient(to right, transparent, var(--gold));
+}
+.divider::after { background: linear-gradient(to left, transparent, var(--gold)); }
+.divider-icon { color: var(--gold); font-size: 1.2rem; }
+
+/* ── PHOTO SECTION ── */
+.photo-wrap {
+  position: relative; width: 100%;
+  padding: 10px; border: 1px solid rgba(216,181,101,0.3);
+  background: rgba(0,0,0,0.3);
+}
+/* Corner brackets */
+.photo-wrap::before, .photo-wrap::after, .photo-inner::before, .photo-inner::after {
+  content: ''; position: absolute; width: 25px; height: 25px;
+  border: 1.5px solid var(--gold); pointer-events: none; z-index: 5;
+}
+.photo-wrap::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.photo-wrap::after { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+.photo-inner::before { bottom: -12px; left: -12px; border-right: none; border-top: none; }
+.photo-inner::after { bottom: -12px; right: -12px; border-left: none; border-top: none; }
+
+.photo-inner { position: relative; }
+.photo-img {
+  display: block; width: 100%; height: auto;
+  /* Cinematic color grade */
+  filter: sepia(0.2) contrast(1.1) brightness(0.9) saturate(1.1);
+}
+.photo-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle, transparent 40%, rgba(10,28,20,0.8) 100%);
+}
+.photo-caption {
+  text-align: center; margin-top: 20px;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(1rem, 3.5vw, 1.2rem); color: var(--gold-light);
+}
+
+/* ── COUNTDOWN ── */
+.countdown-section { text-align: center; margin: 30px 0; }
+.countdown { display: flex; justify-content: center; align-items: center; gap: clamp(5px, 2vw, 15px); }
+.unit {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: rgba(10,28,20,0.6); border: 1px solid rgba(216,181,101,0.2);
+  padding: 10px; min-width: clamp(60px, 15vw, 80px); border-radius: 4px;
+}
+.unit span { font-size: clamp(1.4rem, 5vw, 2rem); color: var(--gold-light); line-height: 1; }
+.unit label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 5px; }
+.sep { color: var(--gold-dark); font-size: 1.5rem; margin-top: -15px; }
+.countdown-done { display: none; color: var(--gold-light); font-style: italic; font-size: 1.2rem; }
+
+/* ── DETAILS ── */
+.details-card {
+  background: rgba(10,28,20,0.6);
+  border: 1px solid rgba(216,181,101,0.2);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  padding: 40px 20px; text-align: center;
+  position: relative;
+}
+.date { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.4rem, 4.5vw, 1.8rem); font-weight: 600; color: var(--gold-light); margin-bottom: 5px; }
+.time { font-size: 0.9rem; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 25px; }
+.venue { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.3rem, 4vw, 1.6rem); color: var(--ivory); }
+.address { font-size: 0.85rem; color: var(--text-dim); margin: 5px 0 25px; }
+
+.btn-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-block; padding: 12px 24px;
+  background: var(--gold-dark); color: #111;
+  text-decoration: none; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+  border-radius: 2px; transition: all 0.3s;
+}
+.btn:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(216,181,101,0.3); }
+.btn-outline {
+  background: transparent; border: 1px solid var(--gold); color: var(--gold);
+}
+.btn-outline:hover { background: rgba(216,181,101,0.1); color: var(--gold-light); }
+
+/* ── CLOSING ── */
+.closing { text-align: center; padding: 60px 0; }
+.closing-text {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 1.2rem; color: var(--text-dim); margin-bottom: 20px; line-height: 1.6;
+}
+.signature {
+  font-family: 'Great Vibes', cursive; font-size: clamp(2rem, 6vw, 3rem);
+  color: var(--gold);
+}
+
+/* ── MUSIC CONTROL ── */
+#music-btn {
+  position: fixed; bottom: 20px; right: 20px; z-index: 50;
+  width: 45px; height: 45px; border-radius: 50%;
+  background: rgba(10,28,20,0.8); border: 1px solid var(--gold-dark);
+  color: var(--gold); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(5px); transition: all 0.3s;
+}
+#music-btn:hover { transform: scale(1.1); background: var(--green-env); }
+.sound-bars { display: flex; gap: 3px; height: 15px; align-items: flex-end; }
+.bar { width: 3px; background: currentColor; border-radius: 2px; transition: height 0.1s; height: 3px; }
+.playing .bar { animation: bounce 1s infinite alternate; }
+.playing .bar:nth-child(1) { animation-delay: 0.1s; }
+.playing .bar:nth-child(2) { animation-delay: 0.3s; }
+.playing .bar:nth-child(3) { animation-delay: 0.5s; }
+@keyframes bounce { 0% { height: 3px; } 100% { height: 15px; } }
+
+/* ── SCROLL ANIMATIONS ── */
+.fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* Responsiveness adjustments handled naturally via clamp and flex wrap */
+</style>
+</head>
+<body class="locked">
+
+<!-- Background Ambient Particles -->
+<div id="sfx"></div>
+
+<!-- ════════════════════════════════════
+     CINEMATIC ENVELOPE REVEAL
+════════════════════════════════════ -->
+<div id="intro-screen">
+  <div class="env-text-top">You are cordially invited...</div>
+
+  <div class="env-container" id="envelope">
+    <!-- Pocket -->
+    <div class="paper env-back"></div>
+    
+    <!-- The Invitation Card sliding out -->
+    <div class="env-card" id="env-card">
+      <div class="card-preview-text">Kunal &amp; Dr. Pradnya</div>
+      <div class="card-preview-line"></div>
+    </div>
+    
+    <!-- Front Flaps -->
+    <div class="paper env-flap-left"></div>
+    <div class="paper env-flap-right"></div>
+    <div class="paper env-flap-bottom"></div>
+    
+    <!-- Top Flap -->
+    <div class="env-top-flap" id="top-flap">
+      <div class="paper env-flap-front"></div>
+      <div class="env-flap-back"></div>
+      
+      <!-- Wax Seal Image -->
+      <div class="wax-seal" id="seal" title="Click to Open"></div>
+    </div>
+  </div>
+
+  <div class="env-text-bottom">Tap seal to open</div>
+</div>
+
+<!-- ════════════════════════════════════
+     MAIN INVITATION
+════════════════════════════════════ -->
+<div id="main-content">
+  <main class="invite-wrapper">
+
+    <section class="hero fade-up">
+      <p class="intro-text">Together with hearts full of joy</p>
+      <h1 class="names">Kunal <span class="amp">&amp;</span> Dr. Pradnya</h1>
+      <p class="tagline">invite you to celebrate the beginning of their forever</p>
+    </section>
+
+    <div class="divider fade-up">
+      <span class="divider-icon">✦</span>
+    </div>
+
+    <section class="photo-section fade-up">
+      <div class="photo-wrap">
+        <div class="photo-inner">
+          <img src="couple.jpg" alt="Kunal & Dr. Pradnya" class="photo-img">
+          <div class="photo-vignette"></div>
+        </div>
+      </div>
+      <p class="photo-caption">Two hearts, one forever</p>
+    </section>
+
+    <div class="divider fade-up">
+      <span class="divider-icon">✦</span>
+    </div>
+
+    <section class="countdown-section fade-up">
+      <div class="countdown" id="countdown">
+        <div class="unit"><span id="cd-d">00</span><label>Days</label></div>
+        <div class="sep">:</div>
+        <div class="unit"><span id="cd-h">00</span><label>Hours</label></div>
+        <div class="sep">:</div>
+        <div class="unit"><span id="cd-m">00</span><label>Mins</label></div>
+        <div class="sep">:</div>
+        <div class="unit"><span id="cd-s">00</span><label>Secs</label></div>
+      </div>
+      <p class="countdown-done" id="cd-done">The celebration has begun — join us!</p>
+    </section>
+
+    <div class="divider fade-up">
+      <span class="divider-icon">✦</span>
+    </div>
+
+    <section class="details-section fade-up">
+      <div class="details-card">
+        <p class="date">Sunday, 20th September 2026</p>
+        <p class="time">7:00 PM ONWARDS</p>
+        <p class="venue">Tuli Imperial</p>
+        <p class="address">Ramdaspeth, Nagpur</p>
+        
+        <div class="btn-group">
+          <a href="#" class="btn" id="add-cal">Add to Calendar</a>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Tuli+Imperial+Ramdaspeth+Nagpur" target="_blank" rel="noopener" class="btn btn-outline">Directions</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing fade-up">
+      <p class="closing-text">Your presence would mean the world to us as we step into this new chapter, hand in hand.</p>
+      <p class="signature">Kunal &nbsp;&amp;&nbsp; Dr. Pradnya</p>
+    </section>
+
+  </main>
+</div>
+
+<!-- Music Button -->
+<button id="music-btn" aria-label="Toggle Music">
+  <div class="sound-bars" id="music-icon">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+</button>
+
+<audio id="bg-music" src="music.mp3" loop preload="auto"></audio>
+<script>
+/* ── PARTICLES ── */
+const sfx = document.getElementById('sfx');
+for(let i=0; i<8; i++) {
+  let orb = document.createElement('div');
+  orb.className = 'orb';
+  let size = 50 + Math.random() * 150;
+  orb.style.width = size + 'px';
+  orb.style.height = size + 'px';
+  orb.style.left = Math.random() * 100 + 'vw';
+  orb.style.top = Math.random() * 100 + 'vh';
+  orb.style.animationDelay = (Math.random() * 5) + 's';
+  sfx.appendChild(orb);
+}
+for(let i=0; i<30; i++) {
+  let sp = document.createElement('div');
+  sp.className = 'sparkle';
+  sp.style.left = Math.random() * 100 + 'vw';
+  sp.style.top = Math.random() * 100 + 'vh';
+  sp.style.animationDuration = (2 + Math.random() * 3) + 's';
+  sp.style.animationDelay = (Math.random() * 5) + 's';
+  sfx.appendChild(sp);
+}
+
+/* ── MUSIC ── */
+let isPlaying = false;
+const bgMusic = document.getElementById('bg-music');
+
+function startMusic() {
+  if (isPlaying) return;
+  bgMusic.play().then(() => {
+    isPlaying = true;
+    document.getElementById('music-icon').classList.add('playing');
+  }).catch(e => console.warn("Audio play failed:", e));
+}
+
+function stopMusic() {
+  bgMusic.pause();
+  isPlaying = false;
+  document.getElementById('music-icon').classList.remove('playing');
+}
+
+document.getElementById('music-btn').addEventListener('click', () => {
+  if (!isPlaying) startMusic();
+  else stopMusic();
+});
+
+/* ── ENVELOPE ANIMATION ── */
+const seal = document.getElementById('seal');
+const envelope = document.getElementById('envelope');
+const introScreen = document.getElementById('intro-screen');
+const mainContent = document.getElementById('main-content');
+let opened = false;
+
+function openEnvelope() {
+  if (opened) return;
+  opened = true;
+  
+  // 1. Open envelope flap and slide card up
+  envelope.classList.add('open');
+
+  // Start music automatically on user interaction
+  try {
+    startMusic();
+  } catch(e) { console.warn("Music failed to start:", e); }
+
+  // 2. Fade out intro screen and reveal main content
+  setTimeout(() => {
+    introScreen.classList.add('hidden');
+    document.body.classList.remove('locked');
+    mainContent.classList.add('visible');
+    
+    // Trigger scroll animations for visible elements
+    setTimeout(checkScroll, 100);
+  }, 1800);
+}
+
+seal.addEventListener('click', openEnvelope);
+envelope.addEventListener('click', openEnvelope);
+introScreen.addEventListener('click', openEnvelope);
+
+/* ── SCROLL ANIMATIONS ── */
+const fadeElements = document.querySelectorAll('.fade-up');
+function checkScroll() {
+  fadeElements.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.9) {
+      el.classList.add('visible');
+    }
+  });
+}
+window.addEventListener('scroll', checkScroll);
+
+/* ── COUNTDOWN ── */
+const tgt = new Date(2026, 8, 20, 19, 0, 0);
+function padZero(n){return String(n).padStart(2,'0');}
+function tick(){
+  const d = tgt - new Date();
+  if(d <= 0){
+    document.getElementById('countdown').style.display = 'none';
+    document.getElementById('cd-done').style.display = 'block';
+    if(typeof cdInt !== 'undefined') clearInterval(cdInt);
+    return;
+  }
+  document.getElementById('cd-d').textContent = padZero(Math.floor(d/86400000));
+  document.getElementById('cd-h').textContent = padZero(Math.floor(d/3600000)%24);
+  document.getElementById('cd-m').textContent = padZero(Math.floor(d/60000)%60);
+  document.getElementById('cd-s').textContent = padZero(Math.floor(d/1000)%60);
+}
+tick();
+const cdInt = setInterval(tick, 1000);
+
+/* ── CALENDAR ── */
+document.getElementById('add-cal').addEventListener('click', (e) => {
+  e.preventDefault();
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'BEGIN:VEVENT',
+    'DTSTART:20260920T133000Z',
+    'DTEND:20260920T183000Z',
+    'SUMMARY:Kunal & Dr. Pradnya\'s Engagement',
+    'LOCATION:Tuli Imperial, Ramdaspeth, Nagpur',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics], { type: 'text/calendar' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Engagement.ics';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
+
