@@ -35,7 +35,7 @@ body.locked { overflow: hidden; }
 /* ════════════════════════════════════
    PARTICLES / SFX
 ════════════════════════════════════ */
-#sfx { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+#sfx { position: fixed; top: 0; left: 0; width: 100%; height: 200vh; pointer-events: none; z-index: 1; }
 .orb {
   position: absolute; border-radius: 50%;
   background: radial-gradient(circle, rgba(216,181,101,0.15), transparent 70%);
@@ -516,7 +516,7 @@ body.locked { overflow: hidden; }
 
     <section class="closing fade-up">
       <p class="closing-text">Your presence would mean the world to us as we step into this new chapter, hand in hand.</p>
-      <p class="signature">Kunal &nbsp;&amp;&nbsp; Dr. Pradnya</p>
+      <p class="signature">Khobragade Family</p>
     </section>
 
   </main>
@@ -542,7 +542,7 @@ for(let i=0; i<8; i++) {
   orb.style.width = size + 'px';
   orb.style.height = size + 'px';
   orb.style.left = Math.random() * 100 + 'vw';
-  orb.style.top = Math.random() * 100 + 'vh';
+  orb.style.top = Math.random() * 200 + 'vh'; /* Spread over 200vh for parallax */
   orb.style.animationDelay = (Math.random() * 5) + 's';
   sfx.appendChild(orb);
 }
@@ -550,11 +550,17 @@ for(let i=0; i<30; i++) {
   let sp = document.createElement('div');
   sp.className = 'sparkle';
   sp.style.left = Math.random() * 100 + 'vw';
-  sp.style.top = Math.random() * 100 + 'vh';
+  sp.style.top = Math.random() * 200 + 'vh'; /* Spread over 200vh for parallax */
   sp.style.animationDuration = (2 + Math.random() * 3) + 's';
   sp.style.animationDelay = (Math.random() * 5) + 's';
   sfx.appendChild(sp);
 }
+
+/* Parallax scroll for particles */
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY;
+  sfx.style.transform = `translateY(${scrolled * -0.4}px)`;
+});
 
 /* ── MUSIC ── */
 let isPlaying = false;
