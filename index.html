@@ -232,8 +232,9 @@ body.locked { overflow: hidden; }
   transform: rotateX(180deg);
 }
 .env-container.open .env-card {
-  transform: translateY(-15%);
-  transition-delay: 0.3s;
+  transform: translateY(-35%) scale(1.05);
+  z-index: 10;
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s, z-index 0s 0.3s;
 }
 
 /* ════════════════════════════════════
