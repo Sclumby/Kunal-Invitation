@@ -616,21 +616,13 @@ function openEnvelope() {
     // Trigger scroll animations for visible elements
     setTimeout(checkScroll, 100);
 
-    // 3. AUTOMATIC SCROLL DOWN
-    // Wait 800ms for the fade-in to settle, then scroll down smoothly
+    // 3. AUTOMATIC SCROLL DOWN TO THE END
     setTimeout(() => {
-      window.scrollBy({
-        top: window.innerHeight * 0.6, // Scrolls down by 60% of the screen height
+      window.scrollTo({
+        top: document.documentElement.scrollHeight, // Targets the absolute bottom of the page
         left: 0,
         behavior: 'smooth'
       });
-      
-      /* Optional alternative: Scroll to a specific section instead of a set distance
-      document.querySelector('.photo-section').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
-      }); 
-      */
     }, 800);
 
   }, 1800);
