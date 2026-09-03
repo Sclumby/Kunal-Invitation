@@ -616,31 +616,46 @@ function openEnvelope() {
     // Trigger scroll animations for visible elements
     setTimeout(checkScroll, 100);
 
-    // 3. PERFECT LINEAR SCROLL WITH USER OVERRIDE
+    // 3. PERFECT LINEAR SCROLL FOR MOBILE & PC
     setTimeout(() => {
-      // Temporarily disable CSS smooth scrolling so it doesn't fight the JS
-      document.documentElement.style.scrollBehavior = 'auto';
-
-      const scrollDuration = 9000; // 5 seconds
+      // Force disable CSS smooth scrolling using !important (Crucial for mobile browsers)
+      document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important');
+      
+      const scrollDuration = 5000; // 5 seconds
       const startY = window.scrollY;
+      
+      // Calculate the target bottom ONCE.
+      // Calculating this continuously on mobile causes speed-glitches when the URL bar hides!
+      let endY = document.documentElement.scrollHeight - window.innerHeight; 
+      
       let startTime = null;
       let isInterrupted = false;
+      let animationId = null;
 
-      // Function to instantly stop the animation if the user touches the screen
+      // Function to instantly kill the animation if the user touches the screen
       function interruptScroll() {
+        if (isInterrupted) return;
         isInterrupted = true;
-        // Restore normal CSS smooth scrolling for regular website use
-        document.documentElement.style.scrollBehavior = 'smooth';
+        
+        // Stop the JavaScript loop immediately
+        if (animationId) window.cancelAnimationFrame(animationId);
+        
+        // Restore normal website scrolling
+        document.documentElement.style.setProperty('scroll-behavior', 'smooth');
+        
+        // Remove the event listeners so they don't fire unnecessarily
         window.removeEventListener('wheel', interruptScroll);
         window.removeEventListener('touchstart', interruptScroll);
+        window.removeEventListener('touchmove', interruptScroll); // Catches mobile swipes
       }
 
-      // Listen for a mouse wheel scroll or a touch on a mobile screen
+      // Listen for desktop scroll (wheel) and mobile touches
       window.addEventListener('wheel', interruptScroll, { passive: true });
       window.addEventListener('touchstart', interruptScroll, { passive: true });
+      window.addEventListener('touchmove', interruptScroll, { passive: true });
 
       function animationStep(currentTime) {
-        if (isInterrupted) return; // Abort if the user intervened
+        if (isInterrupted) return; 
 
         if (!startTime) startTime = currentTime;
         const timeElapsed = currentTime - startTime;
@@ -648,23 +663,20 @@ function openEnvelope() {
         // Ensure progress goes from 0 to exactly 1 (100%)
         const progress = Math.min(timeElapsed / scrollDuration, 1);
         
-        // Recalculate the bottom dynamically in case images load and change the page height
-        const endY = document.documentElement.scrollHeight - window.innerHeight; 
-        
         // Move the window frame by frame linearly
         window.scrollTo(0, startY + (endY - startY) * progress);
 
         // Keep animating until 5 seconds (5000ms) is reached
         if (timeElapsed < scrollDuration) {
-          window.requestAnimationFrame(animationStep);
+          animationId = window.requestAnimationFrame(animationStep);
         } else {
-          // Once the animation finishes naturally, restore normal scrolling
+          // Finished perfectly - restore manual control
           interruptScroll();
         }
       }
       
       // Start the animation
-      window.requestAnimationFrame(animationStep);
+      animationId = window.requestAnimationFrame(animationStep);
       
     }, 800); // Waits 800ms for the page fade-in before starting the scroll
 
