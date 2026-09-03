@@ -616,9 +616,9 @@ function openEnvelope() {
     // Trigger scroll animations for visible elements
     setTimeout(checkScroll, 100);
 
-    // 3. EXACT 5-SECOND SCROLL TO BOTTOM
+    // 3. EXACT 5-SECOND CONSTANT SCROLL
     setTimeout(() => {
-      const scrollDuration = 10000; // Exactly 5 seconds
+      const scrollDuration = 5000; // 5 seconds
       const startY = window.scrollY;
       
       // Calculate the true bottom of the page
@@ -632,13 +632,9 @@ function openEnvelope() {
         // Ensure progress goes from 0 to exactly 1 (100%)
         const progress = Math.min(timeElapsed / scrollDuration, 1);
         
-        // Easing function for a cinematic smooth start and stop
-        const easeInOut = progress < 0.5 
-          ? 2 * progress * progress 
-          : -1 + (4 - 2 * progress) * progress;
-
-        // Move the window frame by frame
-        window.scrollTo(0, startY + (endY - startY) * easeInOut);
+        // LINEAR SCROLL: Moves at the exact same speed the whole time
+        // This stops it from zooming past the photo!
+        window.scrollTo(0, startY + (endY - startY) * progress);
 
         // Keep animating until 5 seconds (5000ms) is reached
         if (timeElapsed < scrollDuration) {
@@ -646,7 +642,7 @@ function openEnvelope() {
         }
       }
       
-      // Start the 5-second animation
+      // Start the 5-second linear animation
       window.requestAnimationFrame(animationStep);
       
     }, 800); // Waits 800ms for the page fade-in before starting the scroll
