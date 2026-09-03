@@ -616,13 +616,12 @@ function openEnvelope() {
     // Trigger scroll animations for visible elements
     setTimeout(checkScroll, 100);
 
-    // 3. CUSTOM SLOW SCROLL TO BOTTOM
+    // 3. EXACT 5-SECOND SCROLL TO BOTTOM
     setTimeout(() => {
-      // 8000 milliseconds = 8 seconds. Increase or decrease this number to change the speed!
-      const scrollDuration = 8000; 
+      const scrollDuration = 5000; // Exactly 5 seconds
       const startY = window.scrollY;
       
-      // Calculates the true maximum scrollable distance
+      // Calculate the true bottom of the page
       const endY = document.documentElement.scrollHeight - window.innerHeight; 
       let startTime = null;
 
@@ -630,10 +629,10 @@ function openEnvelope() {
         if (!startTime) startTime = currentTime;
         const timeElapsed = currentTime - startTime;
         
-        // Ensure progress never goes past 1 (100%)
+        // Ensure progress goes from 0 to exactly 1 (100%)
         const progress = Math.min(timeElapsed / scrollDuration, 1);
         
-        // Easing function for a cinematic start and stop
+        // Easing function for a cinematic smooth start and stop
         const easeInOut = progress < 0.5 
           ? 2 * progress * progress 
           : -1 + (4 - 2 * progress) * progress;
@@ -641,16 +640,16 @@ function openEnvelope() {
         // Move the window frame by frame
         window.scrollTo(0, startY + (endY - startY) * easeInOut);
 
-        // Keep animating until the duration is reached
+        // Keep animating until 5 seconds (5000ms) is reached
         if (timeElapsed < scrollDuration) {
           window.requestAnimationFrame(animationStep);
         }
       }
       
-      // Start the animation
+      // Start the 5-second animation
       window.requestAnimationFrame(animationStep);
       
-    }, 800); // Waits 800ms for the page to become visible before starting
+    }, 800); // Waits 800ms for the page fade-in before starting the scroll
 
   }, 1800);
 }
