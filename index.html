@@ -86,13 +86,14 @@ body.locked { overflow: hidden; }
 @keyframes fade-in { to { opacity: 1; } }
 @keyframes pulse { 0%, 100% { opacity: 0.4; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
 
-/* ── ENVELOPE 3D WRAPPER ── */
+/* ── ENVELOPE 3D WRAPPER (MOBILE BULLETPROOF) ── */
 .env-container {
   position: relative;
   width: min(90vw, 460px);
   height: calc(min(90vw, 460px) * 0.65);
-  perspective: 1600px; -webkit-perspective: 1600px;
-  transform-style: preserve-3d; -webkit-transform-style: preserve-3d;
+  /* 1. Perspective applied directly, but NO preserve-3d on the container */
+  perspective: 1500px; 
+  -webkit-perspective: 1500px;
   animation: slide-up 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 @keyframes slide-up {
@@ -100,12 +101,13 @@ body.locked { overflow: hidden; }
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* Base paper texture applied to all envelope parts */
+/* Base paper texture */
 .paper {
   background-color: var(--green-env);
-  background-image: 
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
   box-shadow: inset 0 0 60px rgba(0,0,0,0.4);
+  /* 2. Force the mobile GPU to create a dedicated layer for every flap */
+  will-change: transform; 
 }
 
 /* 1. Back/Pocket of envelope */
@@ -115,20 +117,16 @@ body.locked { overflow: hidden; }
   overflow: hidden;
   background-color: var(--ivory);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
-  
-  /* Push to the very back in 3D space */
-  transform: translateZ(-10px); 
-  -webkit-transform: translateZ(-10px);
+  z-index: 1;
+  transform: translate3d(0,0,0); -webkit-transform: translate3d(0,0,0);
 }
-
-/* Inside pocket shadow */
 .env-back::before {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 60%);
   pointer-events: none;
 }
 
-/* 2. The Invitation Card (Starts inside the envelope) */
+/* 2. The Invitation Card */
 .env-card {
   position: absolute; 
   left: 3%; right: 3%; bottom: 2%; top: 2%;
@@ -139,56 +137,53 @@ body.locked { overflow: hidden; }
   border: 1px solid var(--gold);
   padding: 20px;
   text-align: center;
-  
-  /* Sit sandwiched between the back pocket and front flaps */
-  transform: translateZ(-5px);
-  -webkit-transform: translateZ(-5px);
-  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-  -webkit-transition: -webkit-transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2; /* Safely tucked behind the front flaps */
+  transform: translate3d(0,0,0); -webkit-transform: translate3d(0,0,0);
+  will-change: transform;
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s;
 }
-
 .env-card::before {
   content:''; position: absolute; inset: 0; opacity: 0.4;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   pointer-events: none;
 }
 .card-preview-text {
-  position: relative;
+  position: relative; z-index: 3;
   font-family: 'Great Vibes', cursive;
   font-size: clamp(1.5rem, 5vw, 2.2rem);
   color: #3b2c14;
   text-shadow: 0 1px 1px rgba(255,255,255,0.8);
 }
 .card-preview-line {
-  position: relative;
+  position: relative; z-index: 3;
   width: 60%; height: 1px; background: var(--gold-dark); margin: 8px auto 0;
 }
 
 /* 3. Front flaps of envelope */
 .env-flap-left, .env-flap-right, .env-flap-bottom {
-  /* Prevent mobile GPU flickering */
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
-
 .env-flap-left {
   position: absolute; left: 0; top: 0; bottom: 0; width: 85%;
   clip-path: polygon(0 0, 100% 100%, 0 100%); -webkit-clip-path: polygon(0 0, 100% 100%, 0 100%);
   border-right: 1px solid rgba(255,255,255,0.05);
   box-shadow: 5px 0 15px rgba(0,0,0,0.2);
-  transform: translateZ(5px); -webkit-transform: translateZ(5px);
+  z-index: 3;
+  transform: translate3d(0,0,0); -webkit-transform: translate3d(0,0,0);
 }
 .env-flap-right {
   position: absolute; right: 0; top: 0; bottom: 0; width: 85%;
   clip-path: polygon(100% 0, 0 100%, 100% 100%); -webkit-clip-path: polygon(100% 0, 0 100%, 100% 100%);
   border-left: 1px solid rgba(255,255,255,0.05);
-  transform: translateZ(5px); -webkit-transform: translateZ(5px);
+  z-index: 3;
+  transform: translate3d(0,0,0); -webkit-transform: translate3d(0,0,0);
 }
 .env-flap-bottom {
   position: absolute; left: 0; right: 0; bottom: 0; height: 60%;
   clip-path: polygon(0 100%, 0 0, 50% 25%, 100% 0, 100% 100%); -webkit-clip-path: polygon(0 100%, 0 0, 50% 25%, 100% 0, 100% 100%);
   filter: drop-shadow(0 -5px 10px rgba(0,0,0,0.3));
-  transform: translateZ(6px); -webkit-transform: translateZ(6px);
+  z-index: 3;
+  transform: translate3d(0,0,0); -webkit-transform: translate3d(0,0,0);
 }
 
 /* 4. Top Flap (opens) */
@@ -196,8 +191,8 @@ body.locked { overflow: hidden; }
   position: absolute; top: -1px; left: -1px; right: -1px; height: 61%;
   transform-origin: top; -webkit-transform-origin: top;
   transform-style: preserve-3d; -webkit-transform-style: preserve-3d;
-  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); -webkit-transition: -webkit-transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateZ(10px); -webkit-transform: translateZ(10px);
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 4;
 }
 .env-flap-front {
   position: absolute; inset: 0;
@@ -224,46 +219,45 @@ body.locked { overflow: hidden; }
   margin-bottom: calc(clamp(70px, 18vw, 90px) / -2);
   border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.4s ease, filter 0.4s ease, opacity 0.6s ease;
+  z-index: 5;
+  transition: transform 0.4s ease, opacity 0.6s ease;
   box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 10px rgba(0,0,0,0.3) inset;
   background: url('wax_seal.jpg') no-repeat center center;
-  background-size: 155%; 
+  background-size: 155%;
   -webkit-tap-highlight-color: transparent;
-  transform: translateZ(12px); -webkit-transform: translateZ(12px);
-}
-@media (hover: hover) and (pointer: fine) {
-  .wax-seal:hover {
-    transform: scale(1.08) translateZ(12px); -webkit-transform: scale(1.08) translateZ(12px);
-    filter: brightness(1.1);
-  }
+  transform: translate3d(0,0,0); -webkit-transform: translate3d(0,0,0);
+  will-change: transform, opacity;
 }
 
-/* ── ANIMATION STATES ── */
+/* ── ANIMATION STATES (THE VETERAN FIX) ── */
 .env-container.open {
   transform: translateY(30px) scale(0.95); 
   -webkit-transform: translateY(30px) scale(0.95);
-  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1); 
-  -webkit-transition: -webkit-transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .env-container.open .wax-seal {
   opacity: 0; 
-  transform: scale(1.5) rotate(15deg) translateZ(12px); 
-  -webkit-transform: scale(1.5) rotate(15deg) translateZ(12px); 
+  transform: scale(1.5) rotate(15deg) translate3d(0,0,0); 
+  -webkit-transform: scale(1.5) rotate(15deg) translate3d(0,0,0); 
   pointer-events: none;
 }
 
 .env-container.open .env-top-flap {
-  transform: rotateX(180deg) translateZ(10px); 
-  -webkit-transform: rotateX(180deg) translateZ(10px);
+  transform: rotateX(180deg); 
+  -webkit-transform: rotateX(180deg);
 }
 
 .env-container.open .env-card {
-  /* THE MAGIC FIX: Instead of changing z-index, the card physically glides forward to +15px, 
-     smoothly passing OVER the side and bottom flaps! */
-  transform: translateY(-30%) translateZ(15px); 
-  -webkit-transform: translateY(-30%) translateZ(15px);
-  transition-delay: 0.2s;
+  /* 
+    3. THE TRICK: Wait 0.4 seconds for the top flap to open.
+    Then INSTANTLY snap the card to z-index 5 so it is in front of the side flaps.
+    Then, simultaneously, slide it up. Because we aren't using 3D depth, the mobile GPU handles this flawlessly!
+  */
+  transform: translateY(-30%) translate3d(0,0,0); 
+  -webkit-transform: translateY(-30%) translate3d(0,0,0);
+  z-index: 5;
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.4s, z-index 0s 0.4s;
 }
 
 
